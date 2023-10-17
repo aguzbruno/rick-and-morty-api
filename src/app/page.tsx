@@ -4,32 +4,41 @@ import Image from "next/image";
 import Rick from "./assets/rickmorty.png";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Mute from './assets/mute.png'
-import Sound from './assets/audio.png'
+import Mute from "./assets/mute.png";
+import Sound from "./assets/audio.png";
+import Play from "./assets/play.png";
+import Pause from "./assets/pause.png";
 
 const Home = () => {
   const [isShorterThan700] = useMediaQuery("(max-width: 700px)");
   const [volume, setVolume] = useState(0.5);
-  
+  const [playing, setPlaying] = useState(false);
+
   useEffect(() => {
-    const audioElement = document.getElementById('background-music') as HTMLAudioElement;
-    audioElement.volume = volume;
-    audioElement.play();
-    return () => {
-      audioElement.pause();
-      audioElement.currentTime = 0;
-    };
-  }, []);
-  useEffect(() => {
-    const audioElement = document.getElementById('background-music') as HTMLAudioElement;
+    const audioElement = document.getElementById(
+      "background-music"
+    ) as HTMLAudioElement;
     audioElement.volume = volume;
   }, [volume]);
-  
-  const handleVolumeChange = (volumeNumber:number) => {
-    const newVolume = volumeNumber
+
+  const handleVolumeChange = (volumeNumber: number) => {
+    const newVolume = volumeNumber;
     setVolume(newVolume);
   };
-  
+  const handlePlay = () => {
+    const audioElement = document.getElementById(
+      "background-music"
+    ) as HTMLAudioElement;
+    audioElement.volume = volume;
+    if (playing) {
+      audioElement.pause();
+      setPlaying(false)
+    } else {
+      audioElement.play();
+      setPlaying(true)
+    }
+  };
+
   return (
     <Flex
       align={"flex-start"}
@@ -71,16 +80,43 @@ const Home = () => {
                   characters
                 </Heading>
               </Link>
-
             ) : (
               <Heading size="md">characters</Heading>
             )}
-             
           </Box>
-          <Flex align="center" mb={4} mt={4}>
-        {volume === 0 &&<Box cursor={'pointer'} onClick={()=>handleVolumeChange(0.5)}><Image src={Mute} height={'20'} width={'20'} alt='mute'></Image></Box>}
-        {volume !== 0 && <Box cursor={'pointer'} onClick={()=>handleVolumeChange(0)}><Image src={Sound} alt='Sound'  height={'20'} width={'20'}></Image></Box>}
-      </Flex>
+          <Flex align="center" mb={4} mt={4} gap='3'>
+            
+            {!playing && (
+              <Box cursor={"pointer"} onClick={() => handlePlay()}>
+                <Image src={Play} alt="Play" height={"20"} width={"20"}></Image>
+              </Box>
+            )}
+            {playing && (
+              <Box cursor={"pointer"} onClick={() => handlePlay()}>
+                <Image
+                  src={Pause}
+                  alt="Pause"
+                  height={"20"}
+                  width={"20"}
+                ></Image>
+              </Box>
+            )}
+            {volume === 0 && (
+              <Box cursor={"pointer"} onClick={() => handleVolumeChange(0.5)}>
+                <Image src={Mute} height={"20"} width={"20"} alt="mute"></Image>
+              </Box>
+            )}
+            {volume !== 0 && (
+              <Box cursor={"pointer"} onClick={() => handleVolumeChange(0)}>
+                <Image
+                  src={Sound}
+                  alt="Sound"
+                  height={"20"}
+                  width={"20"}
+                ></Image>
+              </Box>
+            )}
+          </Flex>
         </Flex>
         {
           <Flex>
